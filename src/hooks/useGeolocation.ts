@@ -9,12 +9,14 @@ interface Position {
 }
 
 export function useGeolocation(watch = true) {
+  const supported = typeof navigator !== "undefined" && "geolocation" in navigator;
   const [position, setPosition] = useState<Position | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(
+    supported ? null : "Geolocalizzazione non supportata"
+  );
 
   useEffect(() => {
-    if (!navigator.geolocation) {
-      setError("Geolocalizzazione non supportata");
+    if (!supported) {
       return;
     }
 
@@ -46,7 +48,7 @@ export function useGeolocation(watch = true) {
     } else {
       navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
     }
-  }, [watch]);
+  }, [watch, supported]);
 
   return { position, error };
 }
