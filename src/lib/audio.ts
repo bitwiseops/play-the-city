@@ -1,6 +1,10 @@
 import { ElevenLabsClient } from "@elevenlabs/elevenlabs-js";
 
-const client = new ElevenLabsClient();
+let _client: ElevenLabsClient | undefined;
+function getClient(): ElevenLabsClient {
+  _client ??= new ElevenLabsClient();
+  return _client;
+}
 
 const VOICE_IDS: Record<string, string> = {
   it: "IKne3meq5aSn9XLyUdCD", // Italian — Giovanni
@@ -17,7 +21,7 @@ export async function textToSpeech(
 ): Promise<Buffer> {
   const voiceId = VOICE_IDS[lang] ?? DEFAULT_VOICE;
 
-  const stream = await client.textToSpeech.convert(voiceId, {
+  const stream = await getClient().textToSpeech.convert(voiceId, {
     text,
     modelId: "eleven_multilingual_v2",
   });

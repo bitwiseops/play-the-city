@@ -1,7 +1,11 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { POI, PlayerProfile, Story } from "@/types";
 
-const anthropic = new Anthropic();
+let _anthropic: Anthropic | undefined;
+function getClient(): Anthropic {
+  _anthropic ??= new Anthropic();
+  return _anthropic;
+}
 
 export async function generateStory(
   poi: POI,
@@ -10,7 +14,7 @@ export async function generateStory(
   const systemPrompt = buildSystemPrompt(profile);
   const userPrompt = buildUserPrompt(poi, profile);
 
-  const message = await anthropic.messages.create({
+  const message = await getClient().messages.create({
     model: "claude-sonnet-4-6",
     max_tokens: 512,
     system: systemPrompt,
