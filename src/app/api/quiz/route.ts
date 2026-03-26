@@ -1,5 +1,5 @@
-import { generateQuizzes } from "@/lib/quiz-engine.js";
-import type { POI, PlayerProfile } from "@/types/index.js";
+import { generateQuizzes } from "@/lib/quiz-engine";
+import type { POI, PlayerProfile } from "@/types/index";
 
 interface QuizRequestBody {
   poi: POI;

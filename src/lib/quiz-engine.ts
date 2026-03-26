@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import type { Quiz, POI, PlayerProfile } from "@/types/index.js";
+import type { Quiz, POI, PlayerProfile } from "@/types/index";
 
 const DIFFICULTY_MAP: Record<PlayerProfile["level"], Quiz["difficulty"]> = {
   casual: "easy",
