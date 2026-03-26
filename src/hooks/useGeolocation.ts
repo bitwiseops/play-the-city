@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
 
 interface Position {
   latitude: number;
@@ -8,15 +8,21 @@ interface Position {
   accuracy: number;
 }
 
+function getGeolocationSupported() {
+  return typeof navigator !== "undefined" && !!navigator.geolocation;
+}
+
 export function useGeolocation(watch = true) {
   const [position, setPosition] = useState<Position | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const supported = useSyncExternalStore(
+    () => () => {},
+    getGeolocationSupported,
+    () => false,
+  );
 
   useEffect(() => {
-    if (!navigator.geolocation) {
-      setError("Geolocalizzazione non supportata");
-      return;
-    }
+    if (!supported) return;
 
     const options: PositionOptions = {
       enableHighAccuracy: true,
@@ -40,15 +46,15 @@ export function useGeolocation(watch = true) {
       const id = navigator.geolocation.watchPosition(
         onSuccess,
         onError,
-        options
+        options,
       );
       return () => navigator.geolocation.clearWatch(id);
     } else {
       navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
     }
-  }, [watch]);
+  }, [watch, supported]);
 
-  return { position, error };
+  return { position, error: supported ? error : "Geolocalizzazione non supportata" };
 }
 
 export function distanceMeters(
