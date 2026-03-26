@@ -10,11 +10,14 @@ interface Position {
 
 export function useGeolocation(watch = true) {
   const [position, setPosition] = useState<Position | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(() =>
+    typeof navigator !== "undefined" && !navigator.geolocation
+      ? "Geolocalizzazione non supportata"
+      : null,
+  );
 
   useEffect(() => {
     if (!navigator.geolocation) {
-      setError("Geolocalizzazione non supportata");
       return;
     }
 
